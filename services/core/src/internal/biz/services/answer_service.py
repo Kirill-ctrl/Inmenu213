@@ -119,3 +119,7 @@ class AnswerService(BaseService):
     @staticmethod
     def get_error_menu_main_doesnt_exists() -> Error:
         return Error(-310, 'Дааное меню не существует', 400)
+
+    @staticmethod
+    def get_error_menu_doesnt_exists() -> Error:
+        return Error(-310, 'Данное меню не существует', 400)

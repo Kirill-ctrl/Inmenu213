@@ -84,3 +84,7 @@ class ErrorEnum:
     @classproperty
     def MENU_MAIN_DOESNT_EXISTS(cls) -> Error:
         return AnswerService.get_error_menu_main_doesnt_exists()
+
+    @classproperty
+    def MENU_DOESNT_EXISTS(cls) -> Error:
+        return AnswerService.get_error_menu_doesnt_exists()

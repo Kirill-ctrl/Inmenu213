@@ -11,6 +11,12 @@ from src.internal.biz.entities.dish_common import DishCommon
 from src.internal.biz.entities.menu_category import MenuCategory
 from src.internal.biz.entities.menu_main import MenuMain
 from src.internal.biz.services.base_service import BaseService
+from src.internal.biz.entities.menu_common import MenuCommon
+from src.internal.biz.entities.dish_main import DishMain
+from src.internal.biz.entities.dish_measure import DishMeasure
+from src.internal.biz.entities.language import Language
+from src.internal.biz.serializers.menu_serializers import MenuSerializer
+
 
 
 class MenuService(BaseService):
@@ -63,3 +69,33 @@ class MenuService(BaseService):
             return None, err
 
         return dish_common, err
+
+
+    @staticmethod
+    async def get_menu(menu_id: int):
+        menu, err = MenuMainDao().get(menu_id)
+        if err:
+            return None, err
+
+        menu_common = MenuCommon(
+            menu_main=MenuMain(
+                id=menu[''],
+                name=menu[''],
+                photo=menu['']
+            ),
+            dish_main=DishMain(
+                name=menu[''],
+                photo=menu[''],
+                description=menu['']
+            ),
+            dish_measures=list(DishMeasure(
+                price_value=menu[''],
+                measure_value=menu['']
+            )),
+            menu_category=list(MenuCategory(
+                name=menu['']
+            )),
+            language=Language(
+                name=menu['']
+            )
+        )

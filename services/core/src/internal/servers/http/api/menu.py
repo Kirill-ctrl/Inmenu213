@@ -24,3 +24,10 @@ async def add_menu(request: Request, auth_account_main_id: int):
         return err.get_response_with_error()
 
     return json({'id': menu_main.id})
+
+
+@menu.route('<menu_id: int>')
+async def get_menu(request: Request, menu_id: int) -> dict:
+    menu = MenuService.get_menu(menu_id)
+
+

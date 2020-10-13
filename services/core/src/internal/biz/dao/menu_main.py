@@ -36,3 +36,52 @@ class MenuMainDao(BaseDao):
 
         menu_main.id = menu_id
         return menu_main, None
+
+        menu_common = MenuCommon(
+            menu_main=MenuMain(
+
+            )
+        )
+
+    async def get(self, menu_id: int) -> Tuple[Optional[MenuMain], Optional[Error]]:
+        sql = """
+            SELECT 
+                place_main.main_language,
+                menu_main.id,
+                menu_main.name,
+                menu_main.photo_link,
+                menu_category.id,
+                menu_category.name,
+                measure_unit.name,
+                dish_main.name,
+                dish_main.photo_link,
+                dish_main.description,
+                dish_measure.price_value,
+                dish_measure.measure_value,
+            FROM
+                menu_main
+            INNER JOIN
+                    place_main ON place_main.id = menu_main.place_main_id
+            INNER JOIN
+                    dish_main ON menu_main.id = dish_main.menu_main_id
+            INNER JOIN
+                    dish_measure ON dish_main.id = dish_measure.dish_main_id
+            INNER JOIN 
+                    measure_unit ON dish_main.measure_unit_id = measure_unit.id
+            INNER JOIN 
+                    menu_category ON menu_category.menu_main_id = menu_main.id
+            WHERE 
+                menu_main.id = $1
+        """
+
+        if self.conn:
+            menu = await self.conn.fetchrow(sql, menu_id)
+        else:
+            async with self.pool.acquire() as conn:
+                menu = await conn.fetchrow(sql, menu_id)
+        if not menu:
+            return None, ErrorEnum.MENU_DOESNT_EXISTS
+        else:
+            print(menu)
+            return menu, None
+
