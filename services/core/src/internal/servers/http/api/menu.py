@@ -26,8 +26,8 @@ async def add_menu(request: Request, auth_account_main_id: int):
     return json({'id': menu_main.id})
 
 
-@menu.route('<menu_id: int>')
+@menu.route('<menu_id:int>')
 async def get_menu(request: Request, menu_id: int) -> dict:
+    print('hello')
     menu = MenuService.get_menu(menu_id)
-
-
+    return json('host')

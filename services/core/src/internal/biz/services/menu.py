@@ -79,23 +79,23 @@ class MenuService(BaseService):
 
         menu_common = MenuCommon(
             menu_main=MenuMain(
-                id=menu[''],
-                name=menu[''],
-                photo=menu['']
+                id=menu['menu_main.id'],
+                name=menu['menu_main.name'],
+                photo=menu['menu_main.photo_link']
             ),
             dish_main=DishMain(
-                name=menu[''],
-                photo=menu[''],
-                description=menu['']
+                name=menu['dish_main.name'],
+                photo=menu['dish_main.photo_link'],
+                description=menu['dish_main.description']
             ),
             dish_measures=list(DishMeasure(
-                price_value=menu[''],
-                measure_value=menu['']
+                price_value=menu['dish_measure.price_value'],
+                measure_value=menu['dish_measure.measure_value']
             )),
             menu_category=list(MenuCategory(
-                name=menu['']
+                name=menu['menu_category.name']
             )),
             language=Language(
-                name=menu['']
+                name=menu['place_main.main_language']
             )
         )

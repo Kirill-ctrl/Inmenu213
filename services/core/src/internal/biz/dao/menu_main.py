@@ -73,7 +73,7 @@ class MenuMainDao(BaseDao):
             WHERE 
                 menu_main.id = $1
         """
-
+        print(sql)
         if self.conn:
             menu = await self.conn.fetchrow(sql, menu_id)
         else:

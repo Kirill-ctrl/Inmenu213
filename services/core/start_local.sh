@@ -1,5 +1,5 @@
 #!/bin/bash
 source venv/bin/activate
 clear
-. local.env
-python app.py
+. assets/local.env
+python3 app.py
