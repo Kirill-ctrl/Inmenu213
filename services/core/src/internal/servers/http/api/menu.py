@@ -3,6 +3,7 @@ from sanic.request import Request
 from sanic.response import json
 
 from src.internal.adapters.entities.utils import get_response_with_validation_errors
+from src.internal.servers.http.answers.accounts import get_response_menu_detail
 from src.internal.biz.deserializers.menu import DES_MENU_ADD, MenuDeserializer
 from src.internal.biz.services.menu import MenuService
 from src.internal.biz.validators.menu_add import MenuAddSchema
@@ -26,8 +27,9 @@ async def add_menu(request: Request, auth_account_main_id: int):
     return json({'id': menu_main.id})
 
 
-@menu.route('<menu_id:int>')
-async def get_menu(request: Request, menu_id: int) -> dict:
-    print('hello')
-    menu = MenuService.get_menu(menu_id)
-    return json('host')
+@menu.route('/<menu_id:int>')
+async def get_menu(request: Request, menu_id: int):
+    menu_common, err = await MenuService.get_menu(menu_id)
+    if err:
+        return None
+    return get_response_menu_detail(menu_common)
