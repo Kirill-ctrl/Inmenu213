@@ -10,6 +10,7 @@ from src.internal.biz.entities.place_location import PlaceLocation
 
 
 DES_PLACE_LOCATION_FROM_DB_FULL = 'place-location-from-db-full'
+DES_PLACE_LOCATIONS_UPDATE = 'place-locations-update'
 
 PLACE_LOCATION = 'plloc_'
 PLACE_LOCATION_ID = PLACE_LOCATION + ID
@@ -29,6 +30,8 @@ class PlaceLocationDeserializer(BaseDeserializer):
     def _get_deserializer(cls, format_des: str):
         if format_des == DES_PLACE_LOCATION_FROM_DB_FULL:
             return cls._deserialize_from_db_full
+        elif format_des == DES_PLACE_LOCATIONS_UPDATE:
+            return cls._deserialize_update
         else:
             raise TypeError
 
@@ -45,4 +48,13 @@ class PlaceLocationDeserializer(BaseDeserializer):
             city=place_location.get(PLACE_LOCATION_CITY),
             country=place_location.get(PLACE_LOCATION_COUNTRY),
             count_places=place_location.get(PLACE_LOCATION_COUNT_PLACES)
+        )
+
+    @staticmethod
+    def _deserialize_update(place_location: dict) -> PlaceLocation:
+        return PlaceLocation(
+            full_address=place_location['full_address'],
+            city=place_location['city'],
+            country=place_location['country'],
+            coords=(place_location['coords']['lat'], place_location['coords']['long'])
         )

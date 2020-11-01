@@ -17,6 +17,7 @@ from src.internal.biz.entities.place_main import PlaceMain
 
 DES_PLACE_MAIN_ADD = 'place-main-add'
 DES_PLACE_MAIN_FROM_DB_FULL = 'place-main-from-db-full'
+DES_PLACE_MAIN_UPDATE = 'place_main_update'
 
 PLACE_MAIN = 'plm_'
 PLACE_MAIN_ID = PLACE_MAIN + ID
@@ -37,6 +38,8 @@ class PlaceMainDeserializer(BaseDeserializer):
             return cls._deserialize_add
         elif format_ser == DES_PLACE_MAIN_FROM_DB_FULL:
             return cls._deserialize_from_db_full
+        elif format_ser == DES_PLACE_MAIN_UPDATE:
+            return cls._deserializer_update
         else:
             raise TypeError
 
@@ -45,7 +48,7 @@ class PlaceMainDeserializer(BaseDeserializer):
         return PlaceMain(
             main_language=Language(id=place_main.get('main_lang_id')),
             name=place_main['name'] if place_main.get('name') else None,
-            login=place_main['login'] if place_main.get('name') else None,
+            login=place_main['login'] if place_main.get('login') else None,
             photo=Photo(short_url=place_main['photo_link']) if place_main.get('photo_link') else None,
             description=place_main['description'] if place_main.get('description') else None,
             main_currency=Currency(id=place_main.get('main_currency_id')),
@@ -74,3 +77,16 @@ class PlaceMainDeserializer(BaseDeserializer):
             is_draft=place_main.get(PLACE_MAIN_IS_DRAFT),
             is_published=place_main.get(PLACE_MAIN_IS_PUBLISHED)
         )
+
+    @staticmethod
+    def _deserializer_update(place_main: dict) -> PlaceMain:
+        place_main_1 =  PlaceMain(
+            main_language=Language(id=place_main['main_lang_id'] if place_main.get('main_lang_id') is not None else 0) if 'main_lang_id' in place_main.keys() else None,
+            name=(place_main['name'] if place_main.get('name') is not None else '0') if 'name' in place_main.keys() else None,
+            login=(place_main['login'] if place_main.get('login') is not None else '0') if 'login' in place_main.keys() else None,
+            photo=Photo(short_url=place_main['photo_link'] if place_main.get('photo_link') is not None else '0') if 'photo_link' in place_main.keys() else None,
+            description=(place_main['description'] if place_main.get('description') is not None else '0') if 'description' in place_main.keys() else None,
+            main_currency=Currency(id=place_main['main_currency_id'] if place_main.get('main_currency_id') is not None else 0) if 'main_currency_id' in place_main.keys() else None
+        )
+        print(place_main_1.name)
+        return place_main_1

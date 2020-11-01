@@ -53,3 +53,30 @@ class PlaceCuisineTypeDao(BaseDao):
 
             rows = await conn.fetch(sql, place_main_ids, lang_id)
             return [PlaceCuisineType(place_main=PlaceMain(id=row['place_main_id']), cuisine_type=CuisineType(id=row['cuisine_type_id'], name=row['name'])) for row in rows], None
+
+    async def get_place_main_id_place_cuisine_type_id(self, place_main_id: int):
+        sql = """
+            SELECT place_main_id, cuisine_type_id
+            FROM place_cuisine_type
+            WHERE place_main_id = $1
+        """
+        data = await self.conn.fetch(sql, place_main_id)
+        return data
+
+    async def update_cuisine_type(self, place_main_id: int, place_cuisine_types: List[PlaceCuisineType], arr: List[Tuple]):
+        sql = """"""
+        temp_sql = 'UPDATE place_cuisine_type SET cuisine_type_id = CASE WHEN '
+        for i in range(len(place_cuisine_types)):
+            sql += temp_sql + f'{place_cuisine_types[i].cuisine_type.id if place_cuisine_types[i].cuisine_type.id else None}::int IS NOT NULL THEN ' + \
+                   f'{place_cuisine_types[i].cuisine_type.id if place_cuisine_types[i].cuisine_type.id else None}::int ELSE cuisine_type_id END ' + \
+                   'WHERE (place_main_id, cuisine_type_id) = ' + f'({arr[i][0]}, {arr[i][1]}); '
+        print(sql)
+        try:
+            await self.conn.execute(sql)
+        except asyncpg.exceptions.ForeignKeyViolationError as exc:
+            if exc.constraint_name == CUISINE_TYPE_FOREIGN_TYPE:
+                return None, ErrorEnum.WRONG_CUISINE_TYPE
+            else:
+                raise TypeError
+
+        return None, None

@@ -5,9 +5,11 @@ from sanic.request import Request
 from sanic.response import json
 
 from src.internal.adapters.entities.utils import get_response_with_validation_errors
-from src.internal.biz.deserializers.place_common import PlaceCommonDeserializer, DES_PLACE_COMMON_ADD
+from src.internal.biz.deserializers.place_common import PlaceCommonDeserializer, DES_PLACE_COMMON_ADD, \
+    DES_PLACE_COMMON_UPDATE
 from src.internal.biz.entities.account_main import AccountMain
 from src.internal.biz.services.place_service import PlaceService
+from src.internal.biz.validators.patch_place import PlacePatchSchema
 from src.internal.biz.validators.place_add import PlaceAddSchema
 from src.internal.servers.http.answers.places import get_response_get_places, get_response_get_places_by_name, \
     get_response_get_locations_with_places, get_response_get_place_locations_on_map, \
@@ -137,3 +139,19 @@ async def del_my_place(request: Request, place_main_id: int):
             return err.get_response_with_error()
 
         return get_response_del_place(response)
+
+
+@places.route('/<place_main_id:int>', methods=['PATCH'])
+# @required_auth
+# @get_status
+async def update_my_place(request: Request, place_main_id: int, auth_account_main_id: int = 2):
+    errors = PlacePatchSchema().validate(request.json)
+    if errors:
+        return get_response_with_validation_errors(errors)
+    place_common = PlaceCommonDeserializer.deserialize(request.json, DES_PLACE_COMMON_UPDATE)
+    place_common.place_main.account_main = AccountMain(id=auth_account_main_id)
+    place_common, err = await PlaceService.update_place(place_main_id, place_common)
+    if err:
+        return err.get_response_with_error()
+
+    return json({'id': place_common.place_main.id})

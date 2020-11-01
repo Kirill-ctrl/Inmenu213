@@ -16,3 +16,21 @@ class PlaceContactsDao(BaseDao):
             place_contacts.vk_link, place_contacts.instagram_link, place_contacts.facebook_link
         )
         return place_contacts, None
+
+    async def update(self, place_main_id, place_contacts: PlaceContacts) -> Tuple[Optional[PlaceContacts], Optional[Error]]:
+        sql = """
+            UPDATE place_contacts
+            SET
+                phone_number = $1,
+                email = $2,
+                site_link = $3,
+                facebook_link = $4,
+                instagram_link = $5,
+                vk_link = $6
+            WHERE place_main_id = $7
+        """
+        await self.conn.execute(sql, place_contacts.phone_number, place_contacts.email,
+                                place_contacts.site_link, place_contacts.facebook_link,
+                                place_contacts.instagram_link, place_contacts.vk_link,
+                                place_main_id)
+        return place_contacts, None

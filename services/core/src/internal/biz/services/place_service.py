@@ -125,3 +125,11 @@ class PlaceService(BaseService):
             return False, err
 
         return True, None
+
+    @staticmethod
+    async def update_place(place_main_id: int, place_common: PlaceCommon) -> Tuple[Optional[PlaceCommon], Optional[Error]]:
+        place_common, err = await PlaceCommonDao().update(place_main_id, place_common)
+        if err:
+            return None, err
+
+        return place_common, None

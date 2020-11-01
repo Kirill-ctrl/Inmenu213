@@ -72,3 +72,23 @@ class PlaceLocationDao(BaseDao):
 
             rows = await conn.fetch(sql, center_point_list[0], center_point_list[1], radius)
             return [PlaceLocationDeserializer.deserialize(row, DES_PLACE_LOCATION_FROM_DB_FULL) for row in rows], None
+
+    async def update(self, place_main_id, place_location: PlaceLocation):
+        sql = """
+            UPDATE
+                place_location
+            SET
+                full_location = $1,
+                city = $2,
+                country = $3,
+                coords = $4
+            WHERE place_main_id = $5
+        """
+        print(place_location.coords)
+        await self.conn.execute(sql, place_location.full_address,
+                                place_location.city,
+                                place_location.country,
+                                place_location.coords,
+                                place_main_id)
+
+        return None, None

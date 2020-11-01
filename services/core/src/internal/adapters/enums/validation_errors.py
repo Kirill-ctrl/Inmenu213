@@ -36,3 +36,11 @@ class ValidationErrorEnum:
     @classproperty
     def NOT_GMAIL(cls) -> ValidationError:
         return AnswerService.get_error_not_gmail()
+
+    @classproperty
+    def WORK_IN_HOLIDAY(cls) -> ValidationError:
+        return AnswerService.get_error_work_in_holiday()
+
+    @classproperty
+    def WORK_IS_ALL_DAY(cls) -> ValidationError:
+        return AnswerService.get_error_work_is_all_day()

@@ -12,6 +12,7 @@ from src.internal.biz.entities.place_service import PlaceService
 
 
 SERVICE_FOREIGN_KEY = 'place_service_service_id_fkey'
+UNIQUE_PLACE_SERVICE = 'unique_place_service'
 
 
 class PlaceServiceDao(BaseDao):
@@ -54,3 +55,32 @@ class PlaceServiceDao(BaseDao):
             """, place_main_id, lang_id)
 
             return [PlaceServiceDeserializer.deserialize(row, DES_PLACE_SERVICE_FROM_DB_FULL) for row in rows], None
+
+    async def get_place_main_id_place_place_service_id(self, place_main_id: int):
+        sql = f"""
+            SELECT place_main_id, service_id
+            FROM place_service
+            WHERE place_main_id = $1
+        """
+        data = await self.conn.fetch(sql, place_main_id)
+        return data
+
+    async def update_place_service(self, place_main_id: int, place_services: List[PlaceService], arr: List[Tuple]):
+        sql = """"""
+        temp_sql = 'UPDATE place_service SET service_id = CASE WHEN '
+        for i in range(len(place_services)):
+            sql += temp_sql + f'{place_services[i].service.id if place_services[i].service.id != 0 else None}::int IS NOT NULL THEN ' + \
+                   f'{place_services[i].service.id if place_services[i].service.id != 0 else None}::int ELSE service_id END ' \
+                   f'WHERE (place_main_id, service_id) = ({arr[i][0]}, {arr[i][1]}); '
+        try:
+            await self.conn.execute(sql)
+        except asyncpg.exceptions.ForeignKeyViolationError as exc:
+            if exc.constraint_name == SERVICE_FOREIGN_KEY:
+                return None, ErrorEnum.WRONG_SERVICE
+            else:
+                raise TypeError
+        except asyncpg.exceptions.UniqueViolationError as exc:
+            if exc.constraint_name == UNIQUE_PLACE_SERVICE:
+                return None, ErrorEnum.UNIQUE_PLACE_SERVICE
+
+        return None, None

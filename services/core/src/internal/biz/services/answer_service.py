@@ -42,6 +42,14 @@ class AnswerService(BaseService):
     def get_error_not_gmail():
         return ValidationError(-109, 'Почта должна быть указана с доменом @gmail.com: ', 400)
 
+    @staticmethod
+    def get_error_work_in_holiday():
+        return ValidationError(-110, 'В выходной день не может быть указан полный день работы', 400)
+
+    @staticmethod
+    def get_error_work_is_all_day():
+        return ValidationError(-111, 'В полный день работы не может быть указано время работы', 400)
+
 #     ==================================================================================
 #     Auth errors
 
@@ -132,6 +140,13 @@ class AnswerService(BaseService):
     def get_error_status_is_undefined() -> Error:
         return Error(-311, 'Статус не определен', 400)
 
+    @staticmethod
+    def get_error_unique_place_type() -> Error:
+        return Error(-312, 'Тип места уже соответствует указанному', 400)
+
+    @staticmethod
+    def get_error_unique_place_service() -> Error:
+        return Error(-313, 'Сервисы места уже соответствуют указанным', 400)
 
 #     ==================================================================================
 #     Internal errors

@@ -10,6 +10,7 @@ from src.internal.biz.entities.place_contacts import PlaceContacts
 
 DES_PLACE_CONTACTS_ADD = 'place-contacts-add'
 DES_PLACE_CONTACTS_FROM_DB_FULL = 'place-contacts-from-db-full'
+DES_PLACE_CONTACTS_UPDATE = 'place-contacts-update'
 
 PLACE_CONTACTS = 'plcts_'
 PLACE_CONTACTS_ID = PLACE_CONTACTS + ID
@@ -33,6 +34,8 @@ class PlaceContactsDeserializer(BaseDeserializer):
             return cls._deserialize_add
         elif format_des == DES_PLACE_CONTACTS_FROM_DB_FULL:
             return cls._deserialize_from_db_full
+        elif format_des == DES_PLACE_CONTACTS_UPDATE:
+            return cls._deserialize_update
         else:
             raise TypeError
 
@@ -61,4 +64,15 @@ class PlaceContactsDeserializer(BaseDeserializer):
             vk_link=place_contacts.get(PLACE_CONTACTS_VK_LINK),
             instagram_link=place_contacts.get(PLACE_CONTACTS_INSTAGRAM_LINK),
             facebook_link=place_contacts.get(PLACE_CONTACTS_FACEBOOK_LINK)
+        )
+
+    @staticmethod
+    def _deserialize_update(place_contacts: dict) -> PlaceContacts:
+        return PlaceContacts(
+            phone_number=place_contacts['phone_number'] if place_contacts.get('phone_number') else None,
+            email=place_contacts['email'] if place_contacts.get('email') else None,
+            site_link=place_contacts['site_link'] if place_contacts.get('site_link') else None,
+            facebook_link=place_contacts['facebook_link'] if place_contacts.get('facebook_link') else None,
+            instagram_link=place_contacts['instagram_link'] if place_contacts.get('instagram_link') else None,
+            vk_link=place_contacts['vk_link'] if place_contacts.get('vk_link') else None
         )
